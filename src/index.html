@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Simple Code Editor</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/min/vs/editor/editor.main.css" />
+        <script src="https://cdn.jsdelivr.net/combine/npm/jszip@3.10.1/dist/jszip.min.js,npm/requirejs@2.3.7/require.min.js,npm/monaco-editor@0.50.0/min/vs/loader.js"></script>
+        <link rel="stylesheet" href="bundle.min.css" />
+        <script type="module" src="bundle.min.js"></script>
+    </head>
+    <body class="flex flex-col justify-between h-screen gap-8 px-10 pt-10 text-white md:px-20 bg-stone-900">
+        <div class="flex flex-col gap-8">
+            <h1 class="flex items-center justify-between pb-4 text-3xl font-bold border-b-2 border-stone-400">
+                <span>Simple Code Editor</span>
+                <a href="https://github.com/m00nbyte/simple-code-editor" target="_blank">
+                    <div class="i-[line-md-github-loop]"></div>
+                </a>
+            </h1>
+        </div>
+
+        <div class="flex flex-col flex-1 border lg:flex-row code-editor-container border-stone-700">
+            <div class="flex flex-col w-full border-transparent lg:border-r h-1/2 lg:h-full lg:w-1/2 code-pane">
+                <div class="flex editor-header bg-stone-800 border-stone-700 h-11">
+                    <span
+                        class="flex items-center justify-center w-1/4 py-2 text-center text-white transition-all cursor-pointer tab hover:bg-stone-700 hover:bg-opacity-50 bg-stone-700"
+                        data-code="html"
+                        >HTML</span
+                    >
+                    <span
+                        class="flex items-center justify-center w-1/4 py-2 text-center text-white transition-all cursor-pointer tab hover:bg-stone-700 hover:bg-opacity-50"
+                        data-code="css"
+                        >CSS</span
+                    >
+                    <span
+                        class="flex items-center justify-center w-1/4 py-2 text-center text-white transition-all cursor-pointer tab hover:bg-stone-700 hover:bg-opacity-50"
+                        data-code="js"
+                        >JS</span
+                    >
+                    <span
+                        class="flex items-center justify-center w-1/4 py-2 text-center text-white transition-all cursor-pointer tab hover:bg-stone-700 hover:bg-opacity-50"
+                        data-code="ext"
+                        >External</span
+                    >
+                </div>
+                <div id="editor-container" class="flex-1 h-1/2 lg:h-full"></div>
+            </div>
+
+            <div class="relative flex flex-col w-full border-transparent lg:border-l h-1/2 lg:h-full lg:w-1/2 preview-pane">
+                <div class="flex items-center justify-between w-full px-2 bg-stone-800">
+                    <div class="flex items-center gap-4 h-11">
+                        <div class="relative group">
+                            <div
+                                class="px-2 py-2 text-center transition-all cursor-pointer device-btn text-stone-600 hover:text-white"
+                                data-device="mobile"
+                            >
+                                <div class="i-[simple-line-icons-screen-smartphone]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Mobile
+                            </span>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="px-2 py-2 text-center transition-all cursor-pointer device-btn text-stone-600 hover:text-white"
+                                data-device="tablet"
+                            >
+                                <div class="i-[simple-line-icons-screen-tablet]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Tablet
+                            </span>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="px-2 py-2 text-center text-white transition-all cursor-pointer device-btn"
+                                data-device="desktop"
+                            >
+                                <div class="i-[simple-line-icons-screen-desktop]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Desktop
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 h-11">
+                        <div class="relative group">
+                            <div
+                                id="refresh-button"
+                                class="px-2 py-2 text-center transition-all cursor-pointer text-stone-400 hover:text-white"
+                            >
+                                <div class="i-[icons8-refresh]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Refresh Preview
+                            </span>
+                        </div>
+
+                        <div class="relative group">
+                            <div
+                                id="download-button"
+                                class="px-2 py-2 text-center transition-all cursor-pointer text-stone-400 hover:text-white"
+                            >
+                                <div class="i-[tdesign-download]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Download Project
+                            </span>
+                        </div>
+
+                        <div class="relative group">
+                            <div
+                                id="reset-button"
+                                class="px-2 py-2 text-center transition-all cursor-pointer text-stone-400 hover:text-rose-600"
+                            >
+                                <div class="i-[mdi-delete-outline]"></div>
+                            </div>
+                            <span
+                                class="absolute invisible px-2 py-1 text-sm text-white transition-opacity -translate-x-1/2 rounded opacity-0 group-hover:visible group-hover:opacity-100 bottom-full left-1/2 bg-stone-700 whitespace-nowrap"
+                            >
+                                Reset All Code
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative w-full h-full preview-container">
+                    <iframe id="preview" class="w-full h-full bg-white border-none"></iframe>
+                    <div
+                        id="overlay"
+                        class="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full transition-all bg-opacity-50 opacity-0 pointer-events-none bg-stone-900"
+                    >
+                        <div
+                            class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                            role="status"
+                        >
+                            <span
+                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                                >Loading...</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer" class="flex flex-row items-center justify-center gap-1 pb-5">
+            <span>made with</span>
+            <div class="i-[mdi-heart] text-red-600"></div>
+            <span>by <a href="https://moonbyte.at/" target="_blank" class="underline">moonbyte</a></span>
+        </div>
+    </body>
+</html>
